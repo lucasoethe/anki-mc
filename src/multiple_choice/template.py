@@ -51,8 +51,8 @@ card_front = """\
     if (void 0 === window.Persistence) { var _persistenceKey = "github.com/SimonLammer/anki-persistence/", _defaultKey = "_default"; if (window.Persistence_sessionStorage = function () { var e = !1; try { "object" == typeof window.sessionStorage && (e = !0, this.clear = function () { for (var e = 0; e < sessionStorage.length; e++) { var t = sessionStorage.key(e); 0 == t.indexOf(_persistenceKey) && (sessionStorage.removeItem(t), e--) } }, this.setItem = function (e, t) { void 0 == t && (t = e, e = _defaultKey), sessionStorage.setItem(_persistenceKey + e, JSON.stringify(t)) }, this.getItem = function (e) { return void 0 == e && (e = _defaultKey), JSON.parse(sessionStorage.getItem(_persistenceKey + e)) }, this.removeItem = function (e) { void 0 == e && (e = _defaultKey), sessionStorage.removeItem(_persistenceKey + e) }) } catch (e) { } this.isAvailable = function () { return e } }, window.Persistence_windowKey = function (e) { var t = window[e], i = !1; "object" == typeof t && (i = !0, this.clear = function () { t[_persistenceKey] = {} }, this.setItem = function (e, i) { void 0 == i && (i = e, e = _defaultKey), t[_persistenceKey][e] = i }, this.getItem = function (e) { return void 0 == e && (e = _defaultKey), t[_persistenceKey][e] || null }, this.removeItem = function (e) { void 0 == e && (e = _defaultKey), delete t[_persistenceKey][e] }, void 0 == t[_persistenceKey] && this.clear()), this.isAvailable = function () { return i } }, window.Persistence = new Persistence_sessionStorage, Persistence.isAvailable() || (window.Persistence = new Persistence_windowKey("py")), !Persistence.isAvailable()) { var titleStartIndex = window.location.toString().indexOf("title"), titleContentIndex = window.location.toString().indexOf("main", titleStartIndex); titleStartIndex > 0 && titleContentIndex > 0 && titleContentIndex - titleStartIndex < 10 && (window.Persistence = new Persistence_windowKey("qt")) } }
 </script>
 
-{{#Title}}<h3 id="myH1">{{Title}}</h3>{{/Title}}
-{{#Question}}<p>{{Question}}</p>{{/Question}}
+{{#Title}}<p>{{Title}}<p>{{/Title}}
+{{#Question}}<h3 id="myH1">{{Question}}</h3>{{/Question}}
 
 <table style="border: 1px solid black" id="qtable"></table>
 
@@ -139,8 +139,6 @@ card_front = """\
         for (var i = 0; i < solutions.length; i++) {
             solutions[i] = Number(solutions[i]);
         }
-
-        var output = document.getElementById("output");
 
         var qrows = document.getElementById("qtable").getElementsByTagName("tr");
 
@@ -283,10 +281,9 @@ card_back = """\
     if (void 0 === window.Persistence) { var _persistenceKey = "github.com/SimonLammer/anki-persistence/", _defaultKey = "_default"; if (window.Persistence_sessionStorage = function () { var e = !1; try { "object" == typeof window.sessionStorage && (e = !0, this.clear = function () { for (var e = 0; e < sessionStorage.length; e++) { var t = sessionStorage.key(e); 0 == t.indexOf(_persistenceKey) && (sessionStorage.removeItem(t), e--) } }, this.setItem = function (e, t) { void 0 == t && (t = e, e = _defaultKey), sessionStorage.setItem(_persistenceKey + e, JSON.stringify(t)) }, this.getItem = function (e) { return void 0 == e && (e = _defaultKey), JSON.parse(sessionStorage.getItem(_persistenceKey + e)) }, this.removeItem = function (e) { void 0 == e && (e = _defaultKey), sessionStorage.removeItem(_persistenceKey + e) }) } catch (e) { } this.isAvailable = function () { return e } }, window.Persistence_windowKey = function (e) { var t = window[e], i = !1; "object" == typeof t && (i = !0, this.clear = function () { t[_persistenceKey] = {} }, this.setItem = function (e, i) { void 0 == i && (i = e, e = _defaultKey), t[_persistenceKey][e] = i }, this.getItem = function (e) { return void 0 == e && (e = _defaultKey), t[_persistenceKey][e] || null }, this.removeItem = function (e) { void 0 == e && (e = _defaultKey), delete t[_persistenceKey][e] }, void 0 == t[_persistenceKey] && this.clear()), this.isAvailable = function () { return i } }, window.Persistence = new Persistence_sessionStorage, Persistence.isAvailable() || (window.Persistence = new Persistence_windowKey("py")), !Persistence.isAvailable()) { var titleStartIndex = window.location.toString().indexOf("title"), titleContentIndex = window.location.toString().indexOf("main", titleStartIndex); titleStartIndex > 0 && titleContentIndex > 0 && titleContentIndex - titleStartIndex < 10 && (window.Persistence = new Persistence_windowKey("qt")) } }
 </script>
 
-{{#Title}}<h3 id="myH1">{{Title}}</h3>{{/Title}}
-{{#Question}}<p>{{Question}}</p>{{/Question}}
+{{#Title}}<p>{{Title}}<p>{{/Title}}
+{{#Question}}<h3 id="myH1">{{Question}}</h3>{{/Question}}
 <table id="qtable"></table>
-<p id="output"></p>
 <div class="hidden" id="MC_solutions">solutions_here</div>
 <div class="hidden" id="user_answers">user_answers_here</div>
 <div class="hidden" id="CardType">{{QType (0=kprim,1=mc,2=sc)}}</div>
@@ -313,11 +310,8 @@ card_back = """\
             var type = document.getElementById('CardType').innerHTML;
             var qtable = document.getElementById('qtable');
             qtable.innerHTML = Persistence.getItem('qtable');
-            var output = document.getElementById("output");
-            var atable = qtable.cloneNode(true);
+            var atable = qtable;
             atable.setAttribute("id", "atable");
-            output.innerHTML = "<hr id='answer' />" + atable.outerHTML;
-            document.getElementById('qtable').innerHTML = qtable.innerHTML;
             var qrows = qtable.getElementsByTagName('tbody')[0].getElementsByTagName("tr");
 
             for (let i = 0; i < answers.length; i++) {
@@ -343,7 +337,7 @@ card_back = """\
                 }
             }
 
-            var arows = document.getElementById("atable").getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+            var arows = atable.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
             var canswers = 0;
             for (let i = 0; i < solutions.length; i++) {
                 //Rename the radio buttons of the atable to avoid interference with those in the qtable.
@@ -351,22 +345,30 @@ card_back = """\
                 arows[(type != 0) ? i : i + 1].getElementsByTagName("td")[0].getElementsByTagName("input")[0].setAttribute("name", "ans_" + ((type != 2) ? String(i + 1) : 'A') + "_solution");
                 //Set the radio buttons in the atable.
                 if (type == 0) arows[i + 1].getElementsByTagName("td")[solutions[i] ? 0 : 1].getElementsByTagName("input")[0].checked = true;
-                else arows[i].getElementsByTagName("td")[0].getElementsByTagName("input")[0].checked = solutions[i] ? true : false;
+                else arows[i].getElementsByTagName("td")[0].getElementsByTagName("input")[0].checked = answers[i] === "1";
                 //Colorize the atable and count correct answers.
                 if (colorizeatable) {
                     if (solutions[i] && answers[i] === "1") {
                         arows[(type != 0) ? i : i + 1].setAttribute("class", "correct");
                         canswers = canswers + 1;
-                    } else if (!solutions[i] && answers[i] === "0") {
+                    } else if (type != 2 && !solutions[i] && answers[i] === "0") {
                         if (colorizefalsefalse) { arows[(type != 0) ? i : i + 1].setAttribute("class", "correct"); }
                         canswers = canswers + 1;
                     } else {
                         arows[(type != 0) ? i : i + 1].setAttribute("class", "wrong");
                     }
+                    if(type == 2) {
+                        arows[i].setAttribute("class", solutions[i] ? "correct" : (answers[i] === "1" ? "wrong" : ""))
+                    }
                 }
             }
             var canswerresult = document.getElementById('canswerresult');
-            canswerresult.innerHTML = "<b>Correct answers: " + Math.round(canswers / solutions.length * 100) + " %</b>";
+            if(type == 2) {
+                canswerresult.innerHTML = "<b>" + (canswers === 1 ? "C" : "Inc") + "orrect</b>";
+                canswerresult.setAttribute("class", canswers === 1 ? "correct" : "wrong");
+            } else {
+                canswerresult.innerHTML = "<b>Correct answers: " + Math.round(canswers / solutions.length * 100) + " %</b>";
+            }
             Persistence.clear();
         }
     }
